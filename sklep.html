@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendrive.pl</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 {
+            margin: 0;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .product-main {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .product-main img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .product-main .info {
+            flex: 1;
+        }
+        .product-main .info h2 {
+            margin: 0;
+        }
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            width: 23%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+        .product-card img {
+            width: 100%;
+            height: auto;
+        }
+        .product-card h3 {
+            margin: 10px;
+        }
+        .product-card .price {
+            font-weight: bold;
+            margin: 0 10px;
+        }
+        .product-card .description {
+            margin: 10px;
+        }
+        .buy-button {
+            display: block;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 0 0 8px 8px;
+            border-top: 1px solid #ddd;
+        }
+        .buy-button:hover {
+            background-color: #0056b3;
+        }
+        #cart-modal, #checkout-form, #login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            position: relative;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .modal-content.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .cart-item {
+            margin-bottom: 10px;
+        }
+        .quantity-buttons {
+            display: inline-block;
+            margin-left: 10px;
+        }
+        .quantity-buttons button {
+            padding: 5px;
+            margin: 0 2px;
+        }
+        .cart-total {
+            font-size: 1.2em;
+            color: red;
+            margin-top: 10px;
+        }
+        .cancel-button, .clear-cart-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .cancel-button:hover, .clear-cart-button:hover {
+            background-color: #c82333;
+        }
+        .clear-cart-button {
+            background-color: #ffc107;
+            color: white;
+        }
+        .clear-cart-button:hover {
+            background-color: #e0a800;
+        }
+        .login-form, .payment-form {
+            display: flex;
+            flex-direction: column;
+        }
+        .login-form input, .payment-form input {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .login-form button, .payment-form button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .login-form button:hover, .payment-form button:hover {
+            background-color: #0056b3;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .close-button:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Pendrive</h1>
+        <div>
+            <button onclick="showCart()">Koszyk (<span id="cart-badge">0</span>)</button>
+            <button onclick="showLoginModal()">Logowanie</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="product-main">
+            <img src="samsung.webp" alt="Pendrive SAMSUNG Bar Plus">
+            <div class="info">
+                <h2>Pendrive SAMSUNG Bar Plus</h2>
+                <p class="price">99,99 PLN</p>
+                <p class="description">Pendrive Samsung BAR Plus 2020 pozwala zapisać do 128 GB filmów, zdjęć oraz innych plików i wygodnie zabrać je do biura lub w podróż. Dane pozostaną bezpieczne, gdyż chroni je ekstremalnie trwała obudowa.</p>
+                <a href="#" class="buy-button" onclick="addToCart('Pendrive SAMSUNG Bar Plus', 99.99); return false;">Dodaj do koszyka</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Inne produkty, które mogą Cię zainteresować</h2>
+        <div class="product-list">
+            <div class="product-card">
+                <img src="adata.webp" alt="Pendrive Adata">
+                <h3>Pendrive Adata</h3>
+                <p class="price">34,99 PLN</p>
+                <p class="description">
+                <p>Pojemność [GB]:128 </p> 
+                <p>Maksymalna prędkość [MB/s]: 90 </p>
+                <p>Prędkość zapisu (maks.): 40 </p>
+                <a href="#" class="buy-button" onclick="addToCart('Pendrive Adata', 34.99); return false;">Dodaj do koszyka</a>
+            </div>
+            <div class="product-card">
+                <img src="kingston.webp" alt="Pendrive Kingston">
+                <h3>Pendrive Kingston</h3>
+                <p class="price">64,99 PLN</p>
+                <p class="description">
+                <p>Pojemność [GB]:64 </p>
+                <p>Maksymalna prędkość [MB/s]: 220 </p>  
+                <p>Prędkość zapisu (maks.): 100</p>  
+                </p>
+                <a href="#" class="buy-button" onclick="addToCart('Pendrive Kingston', 64.99); return false;">Dodaj do koszyka</a>
+            </div>
+            <div class="product-card">
+                <img src="philips.webp" alt="Pendrive Philips">
+                <h3>Pendrive Philips</h3>
+                <p class="price">39,99 PLN</p>
+                <p class="description">
+                <p>Pojemność [GB]: 32</p>
+                <p>Maksymalna prędkość [MB/s]: 70 </p>
+                <p>Prędkość zapisu (maks.): 25</p>
+                </p>
+                <a href="#" class="buy-button" onclick="addToCart('Pendrive Philips', 39.99); return false;">Dodaj do koszyka</a>
+            </div>
+            <div class="product-card">
+                <img src="platinet.webp" alt="Pendrive platinet">
+                <h3>Pendrive platinet</h3>
+                <p class="price">49,99 PLN</p>
+                <p class="description">
+                <p>Pojemność [GB]: 32</p>
+                <p>Maksymalna prędkość [MB/s]: 80</p>
+                <p>Prędkość zapisu (maks.): 30</p>
+                </p>
+                <a href="#" class="buy-button" onclick="addToCart('Pendrive platinet', 49.99); return false;">Dodaj do koszyka</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal koszyka -->
+    <div id="cart-modal">
+        <div class="modal-content">
+            <button class="close-button" onclick="closeCart()">x</button>
+            <h2>Koszyk</h2>
+            <div id="cart-items"></div>
+            <p class="cart-total">Łącznie: <span id="cart-total">0.00</span> PLN</p>
+            <div class="button-container">
+                <button class="cancel-button" onclick="closeCart()">Anuluj</button>
+                <button class="clear-cart-button" onclick="clearCart()">Wyczyść koszyk</button>
+                <button onclick="showCheckoutForm()">Do kasy</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal formularza płatności -->
+    <div id="checkout-form">
+        <div class="modal-content">
+            <button class="close-button" onclick="closeCheckoutForm()">x</button>
+            <h2>Formularz płatności</h2>
+            <form class="payment-form" onsubmit="submitOrder(event)">
+                <input type="text" id="full-name" placeholder="Imię i nazwisko" required>
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="text" id="address" placeholder="Adres dostawy" required>
+                <input type="text" id="card-number" placeholder="Numer karty kredytowej" required>
+                <input type="text" id="expiry-date" placeholder="Data ważności (MM/RR)" required>
+                <input type="text" id="cvv" placeholder="CVV" required>
+                <button type="submit">Złóż zamówienie</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal logowania -->
+    <div id="login-modal">
+        <div class="modal-content">
+            <button class="close-button" onclick="closeLoginModal()">x</button>
+            <h2>Logowanie</h2>
+            <form class="login-form" onsubmit="login(event)">
+                <input type="text" id="username" placeholder="Nazwa użytkownika" required>
+                <input type="password" id="password" placeholder="Hasło" required>
+                <button type="submit">Zaloguj się</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+
+        function addToCart(productName, price) {
+            cart.push({ name: productName, price: price, quantity: 1 });
+            updateCart();
+            alert(productName + ' został dodany do koszyka');
+        }
+
+        function updateCart() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartBadge = document.getElementById('cart-badge');
+            const cartTotalElement = document.getElementById('cart-total');
+            cartItemsContainer.innerHTML = '';
+            let total = 0;
+            cart.forEach((item, index) => {
+                total += item.price * item.quantity;
+                const cartItem = document.createElement('div');
+                cartItem.classList.add('cart-item');
+                cartItem.innerHTML = `
+                    <span>${item.name} - ${item.price.toFixed(2)} PLN</span>
+                    <span class="quantity-buttons">
+                        <button onclick="decreaseQuantity(${index})">-</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="increaseQuantity(${index})">+</button>
+                    </span>
+                `;
+                cartItemsContainer.appendChild(cartItem);
+            });
+            cartBadge.textContent = cart.length;
+            cartTotalElement.textContent = total.toFixed(2);
+        }
+
+        function increaseQuantity(index) {
+            cart[index].quantity++;
+            updateCart();
+        }
+
+        function decreaseQuantity(index) {
+            if (cart[index].quantity > 1) {
+                cart[index].quantity--;
+            } else {
+                cart.splice(index, 1);
+            }
+            updateCart();
+        }
+
+        function clearCart() {
+            cart = [];
+            updateCart();
+        }
+
+        function showCart() {
+            document.getElementById('cart-modal').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('cart-modal').querySelector('.modal-content').classList.add('show');
+            }, 10);
+        }
+
+        function closeCart() {
+            document.getElementById('cart-modal').querySelector('.modal-content').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('cart-modal').style.display = 'none';
+            }, 300);
+        }
+
+        function showCheckoutForm() {
+            document.getElementById('checkout-form').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('checkout-form').querySelector('.modal-content').classList.add('show');
+            }, 10);
+        }
+
+        function closeCheckoutForm() {
+            document.getElementById('checkout-form').querySelector('.modal-content').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('checkout-form').style.display = 'none';
+            }, 300);
+        }
+
+        function showLoginModal() {
+            document.getElementById('login-modal').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('login-modal').querySelector('.modal-content').classList.add('show');
+            }, 10);
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-modal').querySelector('.modal-content').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('login-modal').style.display = 'none';
+            }, 300);
+        }
+
+        function login(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username && password) {
+                alert('Zalogowano pomyślnie');
+                document.querySelector('header button:last-of-type').textContent = 'Zalogowano';
+                document.querySelector('header button:last-of-type').disabled = true;
+                closeLoginModal();
+            } else {
+                alert('Proszę wypełnić wszystkie pola');
+            }
+        }
+
+        function submitOrder(event) {
+            event.preventDefault();
+            const fullName = document.getElementById('full-name').value;
+            const email = document.getElementById('email').value;
+            const address = document.getElementById('address').value;
+            const cardNumber = document.getElementById('card-number').value;
+            const expiryDate = document.getElementById('expiry-date').value;
+            const cvv = document.getElementById('cvv').value;
+
+            if (fullName && email && address && cardNumber && expiryDate && cvv) {
+                alert('Zamówienie zostało złożone pomyślnie!');
+                clearCart(); // Wyczyść koszyk po złożeniu zamówienia
+                closeCheckoutForm();
+            } else {
+                alert('Proszę wypełnić wszystkie pola formularza płatności.');
+            }
+        }
+    </script>
+</body>
+</html>

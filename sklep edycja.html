@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendrivowo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 {
+            margin: 0;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .product-main {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .product-main img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .product-main .info {
+            flex: 1;
+        }
+        .product-main .info h2 {
+            margin: 0;
+        }
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            width: 23%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+        .product-card img {
+            width: 100%;
+            height: auto;
+        }
+        .product-card h3 {
+            margin: 10px;
+        }
+        .product-card .price {
+            font-weight: bold;
+            margin: 0 10px;
+        }
+        .product-card .description {
+            margin: 10px;
+        }
+        .buy-button {
+            display: block;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 0 0 8px 8px;
+            border-top: 1px solid #ddd;
+        }
+        .buy-button:hover {
+            background-color: #0056b3;
+        }
+        #cart-modal, #checkout-form, #login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            position: relative;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .modal-content.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .cart-item {
+            margin-bottom: 10px;
+        }
+        .quantity-buttons {
+            display: inline-block;
+            margin-left: 10px;
+        }
+        .quantity-buttons button {
+            padding: 5px;
+            margin: 0 2px;
+        }
+        .cart-total {
+            font-size: 1.2em;
+            color: red;
+            margin-top: 10px;
+        }
+        .cancel-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .cancel-button:hover {
+            background-color: #c82333;
+        }
+        .login-form {
+            display: flex;
+            flex-direction: column;
+        }
+        .login-form input {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .login-form button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .login-form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Sklep Internetowy</h1>
+        <div>
+            <button onclick="showCart()">Koszyk (<span id="cart-badge">0</span>)</button>
+            <button onclick="showLoginModal()">Logowanie</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="product-main">
+            <img src="samsung.webp" alt="Pendrive SAMSUNG Bar Plus">
+            <div class="info">
+                <h2>Pendrive SAMSUNG Bar Plus</h2>
+                <p class="price">99,99 PLN</p>
+                <p class="description">Pendrive Samsung BAR Plus 2020 pozwala zapisać do 128 GB filmów, zdjęć oraz innych plików i wygodnie zabrać je do biura lub w podróż. Dane pozostaną bezpieczne, gdyż chroni je ekstremalnie trwała obudowa.</p>
+                <a href="#" class="buy-button" onclick="addToCart('Pendrive SAMSUNG Bar Plus', 99.99); return false;">Dodaj do koszyka</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Inne produkty, które mogą Cię zainteresować</h2>
+        <div class="product-list">
+            <div class="product-card">
+                <img src="adata.webp" alt="Pendrive Adata">
+                <h3>Pendrive Adata</h3>
+                <p class="price">34,99 PLN</p>
+                <p class="description">
+                <p>Pojemność [GB]:128 </p> 
+                <p>Maksymalna prędkość [MB/s]: 90 </p>
+                <p>Prędkość zapisu (maks.): 40 </p>
+                <a href="#" class="buy-button" onclick="addToCart('Pendrive Adata', 34.99); return false;">Dodaj do koszyka</a>
+            </div>
+            <div class="product-card">
+                <img src="kingston.webp" alt="Pendrive Kingston">
+                <h3>Pendrive Kingston</h3>
+                <p class="price">64,99 PLN</p>
+                <p class="description">
+                <p>Pojemność [GB]:64 </p>
+                <p>Maksymalna prędkość [MB/s]: 220 </p>  
+                <p>Prędkość zapisu (maks.): 100</p>  
+                </p>
+                <a href="#" class="buy-button" onclick="addToCart('Pendrive Kingston', 64.99); return false;">Dodaj do koszyka</a>
+            </div>
+            <div class="product-card">
+                <img src="philips.webp" alt="Pendrive philips">
+                <h3>Pendrive philips</h3>
+                <p class="price">39,99 PLN</p>
+                <p class="description">
+                <p>Pojemność [GB]: 32</p>
+                <p>Maksymalna prędkość [MB/s]: 25 </p> 
+                <p>Prędkość zapisu (maks.): 18 </p>   
+                </p>
+                <a href="#" class="buy-button" onclick="addToCart('Pendrive philips', 39.99); return false;">Dodaj do koszyka</a>
+            </div>
+            <div class="product-card">
+                <img src="platinet.webp" alt="Pendrive platinet">
+                <h3>Pendrive platinet </h3>
+                <p class="price">29,99 PLN</p>
+                <p class="description">
+                <p>Pojemność [GB]: 16</p> 
+                <p>Maksymalna prędkość [MB/s]: 20 </p>  
+                <p>Prędkość zapisu (maks.): 10 </p> 
+                </p>
+                <a href="#" class="buy-button" onclick="addToCart('Pendrive platinet', 29.99); return false;">Dodaj do koszyka</a>
+            </div>
+            <!-- Dodaj więcej produktów w razie potrzeby -->
+        </div>
+    </div>
+
+    <div id="cart-modal">
+        <div class="modal-content" id="cart-content">
+            <div class="button-container">
+                <button id="clear-cart-button" onclick="clearCart()">Wyczyść koszyk</button>
+                <button id="close-cart-button" onclick="closeCart()">Zamknij koszyk</button>
+            </div>
+            <ul id="cart-items" style="list-style: none; padding: 0; margin: 0;">
+                <!-- Produkty będą dodawane dynamicznie -->
+            </ul>
+            <div id="cart-total" class="cart-total">Suma: 0 PLN</div>
+            <button id="checkout-button" onclick="showCheckoutForm()">Płatność</button>
+        </div>
+    </div>
+
+    <div id="checkout-form">
+        <div class="modal-content">
+            <h2>Formularz płatności</h2>
+            <form onsubmit="submitOrder(event)">
+                <div style="margin-bottom: 10px;">
+                    <label for="name">Imię i nazwisko:</label>
+                    <input id="name" type="text" required>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label for="address">Adres:</label>
+                    <input id="address" type="text" required>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label for="city">Miasto:</label>
+                    <input id="city" type="text" required>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label for="postal-code">Kod pocztowy:</label>
+                    <input id="postal-code" type="text" required>
+                </div>
+                <button type="submit">Złóż zamówienie</button>
+                <button type="button" class="cancel-button" onclick="closeCheckoutForm()">Anuluj</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="login-modal">
+        <div class="modal-content">
+            <h2>Logowanie</h2>
+            <form class="login-form" onsubmit="login(event)">
+                <input id="username" type="text" placeholder="Nazwa użytkownika" required>
+                <input id="password" type="password" placeholder="Hasło" required>
+                <button type="submit">Zaloguj się</button>
+                <button type="button" class="cancel-button" onclick="closeLoginModal()">Anuluj</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function addToCart(productName, price) {
+            const index = cart.findIndex(item => item.name === productName);
+            if (index > -1) {
+                cart[index].quantity += 1;
+            } else {
+                cart.push({ name: productName, price, quantity: 1 });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
+        }
+
+        function updateQuantity(index, change) {
+            cart[index].quantity += change;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
+        }
+
+        function clearCart() {
+            cart = [];
+            localStorage.removeItem('cart');
+            updateCart();
+        }
+
+        function updateCart() {
+            const cartItems = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            cartItems.innerHTML = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                const listItem = document.createElement('li');
+                listItem.className = 'cart-item';
+                listItem.innerHTML = `
+                    ${item.name} - ${item.price.toFixed(2)} PLN
+                    <div class="quantity-buttons">
+                        <button onclick="updateQuantity(${index}, -1)">-</button>
+                        ${item.quantity}
+                        <button onclick="updateQuantity(${index}, 1)">+</button>
+                        <button onclick="removeFromCart(${index})">Usuń</button>
+                    </div>
+                `;
+                cartItems.appendChild(listItem);
+                total += item.price * item.quantity;
+            });
+
+            cartTotal.textContent = `Suma: ${total.toFixed(2)} PLN`;
+            cartTotal.style.color = 'red';
+            document.getElementById('cart-badge').textContent = cart.length;
+        }
+
+        function showCart() {
+            document.getElementById('cart-modal').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('cart-content').classList.add('show');
+            }, 10); // Slight delay to trigger animation
+            updateCart();
+        }
+
+        function closeCart() {
+            document.getElementById('cart-content').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('cart-modal').style.display = 'none';
+            }, 300); // Delay to match animation time
+        }
+
+        function showCheckoutForm() {
+            document.getElementById('checkout-form').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('checkout-form').querySelector('.modal-content').classList.add('show');
+            }, 10);
+        }
+
+        function closeCheckoutForm() {
+            document.getElementById('checkout-form').querySelector('.modal-content').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('checkout-form').style.display = 'none';
+            }, 300);
+        }
+
+        function showLoginModal() {
+            document.getElementById('login-modal').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('login-modal').querySelector('.modal-content').classList.add('show');
+            }, 10);
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-modal').querySelector('.modal-content').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('login-modal').style.display = 'none';
+            }, 300);
+        }
+
+        function login(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username && password) {
+                alert('Zalogowano pomyślnie');
+                closeLoginModal();
+            } else {
+                alert('Proszę wypełnić wszystkie pola');
+            }
+        }
+
+        function submitOrder(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const city = document.getElementById('city').value;
+            const postalCode = document.getElementById('postal-code').value;
+            
+            if (name && address && city && postalCode) {
+                alert('Zamówienie złożone pomyślnie');
+                clearCart();
+                closeCheckoutForm();
+            } else {
+                alert('Proszę wypełnić wszystkie pola');
+            }
+        }
+
+        updateCart(); // Initialize cart display
+    </script>
+</body>
+</html>
